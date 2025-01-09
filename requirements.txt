@@ -1,4 +1,5 @@
-flask
-pandas
+Flask
 joblib
+pandas
 scikit-learn
+gunicorn
