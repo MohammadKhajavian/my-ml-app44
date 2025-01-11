@@ -1,30 +1,28 @@
-from flask import Flask, request, jsonify
-import joblib
 import pandas as pd
+import joblib
+from flask import Flask, request, jsonify
 
 # Load the trained model
-model = joblib.load("random_forest_model.pkl")
+model = joblib.load('random_forest_model.pkl')
 
-# Initialize Flask app
 app = Flask(__name__)
-
-
-@app.route('/')
-def home():
-    return "Welcome to the Random Forest Prediction API! Use the /predict endpoint to make predictions."
 
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Get JSON data from request
-    data = request.get_json()
-    features = pd.DataFrame(data)
+    try:
+        # Get input data from the request
+        data = request.get_json(force=True)
+        # Convert input data into a DataFrame
+        df = pd.DataFrame(data, index=[0])
 
-    # Make prediction
-    predictions = model.predict(features)
+        # Make predictions
+        prediction = model.predict(df[['Mass', 'Concentration', 'pH']])
 
-    # Return predictions as JSON
-    return jsonify(predictions.tolist())
+        # Return the prediction as a JSON response
+        return jsonify({'prediction': prediction.tolist()})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
 if __name__ == '__main__':
