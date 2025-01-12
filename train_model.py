@@ -1,26 +1,27 @@
-from flask import Flask, request, jsonify
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 import joblib
-import numpy as np
 
-app = Flask(__name__)
+# Load the data
+data = pd.read_csv(r'C:\Users\mokha\Desktop\previous data\Post Doc\Machine learning\My project\CSV file\inputfile\input.csv')
 
-# Load the trained model
-model = joblib.load('model.pkl')
+# Split the data into features and target
+X = data[['Mass', 'Concentration', 'pH']]
+y = data['Removal']
 
-@app.route('/')
-def home():
-    return "Random Forest Model API is running!"
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
-    mass = data['Mass']
-    concentration = data['Concentration']
-    ph = data['pH']
-    # Make prediction
-    features = np.array([[mass, concentration, ph]])
-    prediction = model.predict(features)
-    return jsonify({'predicted_removal': prediction[0]})
+# Train the model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Evaluate the model
+y_pred = model.predict(X_test)
+mae = mean_absolute_error(y_test, y_pred)
+print(f'Mean Absolute Error: {mae}')
+
+# Save the trained model to a file
+joblib.dump(model, 'model.pkl')
