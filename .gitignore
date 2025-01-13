@@ -1,5 +1,22 @@
-model.pkl
+# Ignore Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignore model files
+model.pkl
+
+# Ignore temporary or environment files
+.env
+*.env
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Explicitly include the templates directory
+!templates/
+
+# Ignore all other folders except explicitly included
+.*
