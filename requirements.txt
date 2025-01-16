@@ -1,5 +1,5 @@
-Flask==x.x.x
-joblib==x.x.x
-scikit-learn==x.x.x
-requests==x.x.x
-numpy==x.x.x
+Flask
+joblib
+scikit-learn
+requests
+numpy
