@@ -1,5 +1,7 @@
-import requests
+import joblib  # Import joblib
 import numpy as np
+import pandas as pd
+from train_model import RandomForestRegressor, X_test, y_test
 
 # Test the Flask app
 def test_flask_app():
@@ -15,10 +17,20 @@ def test_flask_app():
 
 # Test the model directly
 def test_model():
-    from train_model import RandomForestRegressor, X_test, y_test
+    # Load the trained model
     model = joblib.load("model.pkl")
+
+    # Ensure X_test and y_test are properly defined (from train_model.py)
+    # If you cannot import them directly, define them here
+    data = pd.read_csv('tests/test_data.csv')  # Make sure the path is correct
+    X_test = data[['Mass', 'Concentration', 'pH']]
+    y_test = data['Removal']
+
+    # Make predictions
     y_pred = model.predict(X_test)
-    assert np.mean(y_pred - y_test) < 0.1  # Ensuring predictions are accurate
+
+    # Ensure predictions are accurate
+    assert np.mean(y_pred - y_test) < 0.1
 
 if __name__ == "__main__":
     test_flask_app()
