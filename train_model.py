@@ -4,8 +4,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 import joblib
 
-# Load the data
-data = pd.read_csv(r'C:\Users\mokha\Desktop\previous data\Post Doc\Machine learning\My project\CSV file\inputfile\input.csv')
+# For testing (use the relative path to 'test_data.csv' in the 'tests' folder)
+data = pd.read_csv('tests/test_data.csv')  # Adjust this path as needed for testing
+
+# For deployment (use the relative path to 'input.csv')
+# data = pd.read_csv('input.csv')  # Uncomment this for deployment
 
 # Split the data into features and target
 X = data[['Mass', 'Concentration', 'pH']]
