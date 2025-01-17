@@ -6,10 +6,10 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 
 # For testing (use the relative path to 'test_data.csv' in the 'tests' folder)
-data = pd.read_csv('C:/Users/mokha/Desktop/previous data/Post Doc/Machine learning/My project/CSV file/inputfile/input.csv')
+#data = pd.read_csv('C:/Users/mokha/Desktop/previous data/Post Doc/Machine learning/My project/CSV file/inputfile/input.csv')
 
 # For deployment (use the relative path to 'input.csv')
-# data = pd.read_csv('input.csv')  # Uncomment this for deployment
+data = pd.read_csv('input.csv')  # Uncomment this for deployment
 
 # Split the data into features and target
 X = data[['Mass', 'Concentration', 'pH']]
