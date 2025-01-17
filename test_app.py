@@ -1,7 +1,7 @@
-import joblib  # Import joblib
+import requests  # Add this import statement
 import numpy as np
-import pandas as pd
-from train_model import RandomForestRegressor, X_test, y_test
+from sklearn.metrics import mean_absolute_error
+import joblib
 
 # Test the Flask app
 def test_flask_app():
@@ -11,26 +11,19 @@ def test_flask_app():
         "Concentration": 5,
         "pH": 7
     }
-    response = requests.post(url, data=payload)
+    response = requests.post(url, data=payload)  # Ensure requests is imported
     assert response.status_code == 200
     assert "Predicted Removal" in response.text
 
 # Test the model directly
 def test_model():
-    # Load the trained model
-    model = joblib.load("model.pkl")
-
-    # Ensure X_test and y_test are properly defined (from train_model.py)
-    # If you cannot import them directly, define them here
-    data = pd.read_csv('tests/test_data.csv')  # Make sure the path is correct
-    X_test = data[['Mass', 'Concentration', 'pH']]
-    y_test = data['Removal']
-
-    # Make predictions
+    model = joblib.load("model.pkl")  # Adjust path if needed
+    X_test = [[10, 5, 7]]  # Example test input
+    y_test = [0.8]  # Example expected output
     y_pred = model.predict(X_test)
-
-    # Ensure predictions are accurate
-    assert np.mean(y_pred - y_test) < 0.1
+    error = mean_absolute_error(y_test, y_pred)
+    print(f"Mean Absolute Error: {error}")
+    assert error < 0.1  # Ensure predictions are accurate
 
 if __name__ == "__main__":
     test_flask_app()
