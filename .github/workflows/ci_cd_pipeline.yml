@@ -37,3 +37,10 @@ jobs:
       run: |
         nohup python app.py &  # Start Flask in the background
         sleep 5  # Allow time for the app to initialize
+
+    # Step 6: Deploy to Render
+    - name: Deploy to Render
+      run: |
+        curl -X POST \
+        -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+        https://api.render.com/deploy/srv-cu1m6p9u0jms738k6620?key=CF2Hy2JToYI
