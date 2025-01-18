@@ -6,27 +6,34 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build-and-train:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    # Step 1: Checkout the repository
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Set up Python
+    # Step 2: Set up Python environment
+    - name: Set Up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
 
-    - name: Install dependencies
+    # Step 3: Install dependencies
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Start Flask app
+    # Step 4: Train the machine learning model
+    - name: Train Model
+      run: |
+        python train_model.py
+        ls -lh  # List the directory to confirm model.pkl and scaler.pkl are created
+
+    # Step 5: Start Flask app
+    - name: Start Flask App
       run: |
         nohup python app.py &  # Start Flask in the background
-        sleep 5  # Give it time to start
-
-    - name: Run tests
-      run: python train_model.py
+        sleep 5  # Allow time for the app to initialize
