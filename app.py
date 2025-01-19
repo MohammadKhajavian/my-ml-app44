@@ -1,59 +1,41 @@
 from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
-import os
 
 app = Flask(__name__)
 
-# Load the trained model and scaler
-# Ensure model.pkl and scaler.pkl are in the same directory as app.py and not ignored in .gitignore
-model_path = 'model.pkl'
-scaler_path = 'scaler.pkl'
-
+# Load the combined model and scaler
 try:
-    model = joblib.load(model_path)
-    scaler = joblib.load(scaler_path)
+    combined = joblib.load('model_and_scaler.pkl')
+    model = combined['model']
+    scaler = combined['scaler']
 except Exception as e:
-    model, scaler = None, None
+    model = None
+    scaler = None
     print(f"Error loading model or scaler: {e}")
 
 @app.route('/')
-def home():
-    # Serve the HTML form
-    return render_template('index.html')
+def index():
+    return render_template('index.html')  # Ensure you have a corresponding `index.html` file.
 
 @app.route('/predict', methods=['POST'])
 def predict():
     if not model or not scaler:
-        # Handle case where the model or scaler failed to load
-        return render_template('index.html', 
-                               prediction_text='Model or scaler not loaded. Please check the logs.')
+        return "Model or scaler not loaded. Please check the logs."
 
     try:
-        # Get data from the form
-        mass = float(request.form.get('Mass', 0))
-        concentration = float(request.form.get('Concentration', 0))
-        ph = float(request.form.get('pH', 0))
+        # Get input features from the form
+        features = [float(x) for x in request.form.values()]
+        features_array = np.array(features).reshape(1, -1)
 
-        # Prepare features for prediction
-        features = np.array([[mass, concentration, ph]])
-        scaled_features = scaler.transform(features)  # Scale input features using the saved scaler
+        # Scale the input features
+        scaled_features = scaler.transform(features_array)
 
         # Make prediction
         prediction = model.predict(scaled_features)
-
-        return render_template('index.html',
-                               prediction_text=f'Predicted Removal: {prediction[0]:.2f}')
-    except ValueError as ve:
-        # Handle invalid input
-        return render_template('index.html', 
-                               prediction_text='Invalid input. Please enter numeric values.')
+        return jsonify({'Prediction': float(prediction[0])})
     except Exception as e:
-        # Handle general errors
-        return render_template('index.html', 
-                               prediction_text=f'Error: {e}')
+        return jsonify({'Error': str(e)})
 
-if __name__ == "__main__":
-    # Bind to the PORT environment variable or use default (5000)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(debug=True)
