@@ -31,6 +31,7 @@ jobs:
       run: |
         python train_model.py
         ls -lh  # List the directory to confirm model.pkl and scaler.pkl are created
+        cat input.csv  # Confirm the input file is correct
 
     # Step 5: Start Flask app
     - name: Start Flask App
