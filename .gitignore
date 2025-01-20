@@ -1,0 +1,6 @@
+*.pyc
+__pycache__/
+*.csv
+model.pkl
+scaler.pkl
+.env
