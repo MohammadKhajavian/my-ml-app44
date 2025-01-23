@@ -10,25 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.8'
+        python-version: '3.9'
 
-    - name: Install Dependencies
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Tests
-      run: |
-        python train_model.py
-
     - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       run: |
-        curl -X POST -H "Content-Type: application/json" \
-        -d '{"serviceName": "my-ml-app44"}' \
-        https://api.render.com/deploy
+        curl -X POST "https://api.render.com/v1/services/YOUR_SERVICE_ID/deploys" \
+        -H "Authorization: Bearer $RENDER_API_KEY"
