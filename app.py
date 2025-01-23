@@ -1,27 +1,46 @@
+import os
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import mean_absolute_error
+from flask import Flask, request, jsonify
 import joblib
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+import threading
 
-# Load dataset
-data = pd.read_csv('input.csv')  # Ensure 'input.csv' is in the repository
+app = Flask(__name__)
 
-# Split features and target
-X = data[['Mass', 'Concentration', 'pH']]
-y = data['Removal']
+# Load the model
+model = joblib.load('model.pkl')
 
-# Split dataset into training and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Watch for changes to input.csv and retrain the model
+class FileChangeHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        global model
+        if event.src_path.endswith("input.csv"):
+            print("Detected change in input.csv, retraining model...")
+            data = pd.read_csv('input.csv')
+            X = data[['Mass', 'Concentration', 'pH']]
+            y = data['Removal']
+            model.fit(X, y)  # Incremental retraining (modify as needed)
+            joblib.dump(model, 'model.pkl')
+            print("Model retrained and saved.")
 
-# Train the ANN model
-model = MLPRegressor(hidden_layer_sizes=(64, 64, 32), max_iter=500, random_state=42)
-model.fit(X_train, y_train)
+# Start a thread for the file watcher
+def start_file_watcher():
+    event_handler = FileChangeHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path=".", recursive=False)
+    observer.start()
 
-# Evaluate the model
-y_pred = model.predict(X_test)
-mae = mean_absolute_error(y_test, y_pred)
-print(f"Mean Absolute Error: {mae}")
+@app.route('/predict', methods=['POST'])
+def predict():
+    input_data = request.get_json()
+    X = pd.DataFrame(input_data)
+    predictions = model.predict(X).tolist()
+    return jsonify({'predictions': predictions})
 
-# Save the trained model
-joblib.dump(model, 'model.pkl')
+if __name__ == '__main__':
+    threading.Thread(target=start_file_watcher, daemon=True).start()
+
+    # Get the port from the environment variable (default to 5000 if not set)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
