@@ -1,8 +1,0 @@
-flask
-tensorflow==2.12.0
-joblib
-numpy
-pandas
-scipy
-scikit-learn
-gunicorn
