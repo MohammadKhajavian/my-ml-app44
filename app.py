@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import joblib
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -31,10 +31,17 @@ def start_file_watcher():
     observer.schedule(event_handler, path=".", recursive=False)
     observer.start()
 
-@app.route('/', methods=['GET'])
+# Add a route for the home page
+@app.route('/')
 def home():
-    return "Welcome to the Machine Learning Prediction App! Use the /predict endpoint to get predictions."
+    return render_template('index.html')  # Serve the HTML form
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    input_data = request.get_json()
+    X = pd.DataFrame(input_data)
+    predictions = model.predict(X).tolist()
+    return jsonify({'predictions': predictions})
 
 if __name__ == '__main__':
     threading.Thread(target=start_file_watcher, daemon=True).start()
