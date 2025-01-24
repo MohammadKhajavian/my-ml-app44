@@ -31,12 +31,10 @@ def start_file_watcher():
     observer.schedule(event_handler, path=".", recursive=False)
     observer.start()
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    input_data = request.get_json()
-    X = pd.DataFrame(input_data)
-    predictions = model.predict(X).tolist()
-    return jsonify({'predictions': predictions})
+@app.route('/', methods=['GET'])
+def home():
+    return "Welcome to the Machine Learning Prediction App! Use the /predict endpoint to get predictions."
+
 
 if __name__ == '__main__':
     threading.Thread(target=start_file_watcher, daemon=True).start()
