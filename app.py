@@ -1,6 +1,14 @@
 from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
+import os
+
+model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
+scaler_path = os.path.join(os.path.dirname(__file__), 'scaler.pkl')
+
+model = joblib.load(model_path)
+scaler = joblib.load(scaler_path)
+
 
 # Load model and scaler
 model = joblib.load('model.pkl')
