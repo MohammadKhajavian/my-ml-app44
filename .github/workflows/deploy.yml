@@ -29,8 +29,8 @@ jobs:
       run: |
         curl -X POST -H "Accept: application/json" \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -F "serviceName=your-service-name" \
-          -F "repo=https://github.com/your-username/your-repo-name" \
+          -F "serviceName=srv-cu1m6p9u0jms738k6620" \
+          -F "repo=https://github.com/MohammadKhajavian/my-ml-app44" \
           -F "branch=main" \
           -F "buildCommand=python train_model.py" \
           -F "startCommand=gunicorn app:app" \
