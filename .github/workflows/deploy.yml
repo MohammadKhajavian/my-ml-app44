@@ -17,5 +17,8 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run the app
-        run: python app.py
+      - name: Test application
+        run: python -m unittest discover  # Optional for tests
+
+      - name: Deploy to Render
+        run: render-python deploy
