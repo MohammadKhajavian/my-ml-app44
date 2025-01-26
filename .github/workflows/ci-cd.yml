@@ -38,4 +38,4 @@ jobs:
       - name: Deploy to Render
         uses: render-examples/deploy-render@v1
         with:
-          service: flask-app  # Replace with your Render service name
+          service: my-ml-app44  # Replace with your Render service name
