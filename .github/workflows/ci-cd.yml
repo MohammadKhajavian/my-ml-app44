@@ -4,49 +4,34 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: 3.9
 
+      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run tests
+      # Train the model
+      - name: Train model
         run: |
           python train_model.py
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      # Deploy to Render
       - name: Deploy to Render
-        env:
-          RENDER_API_TOKEN: ${{ secrets.ML5 }}
         run: |
-          # Install Render CLI
-          curl -fsSL https://render.com/cli-install | bash
-
-          # Login to Render CLI
-          render login --api-token "${{ secrets.ML5 }}"
-
-          # Deploy the app (replace 'flask-app' with your Render service name)
-          render deploy flask-app
+          curl -X POST "https://api.render.com/deploy/srv-cu1m6p9u0jms738k6620?key=${{ secrets.MR55 }}"
