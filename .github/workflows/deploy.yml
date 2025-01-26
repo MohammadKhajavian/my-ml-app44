@@ -34,7 +34,7 @@ jobs:
         -H "Authorization: Bearer $RENDER_API_KEY" \
         -H "Content-Type: application/json" \
         -d '{
-          "serviceId": "MohammadKhajavian/my-ml-app44",
+          "serviceId": "your-service-id",
           "branch": "main",
           "clearCache": true
         }' \
