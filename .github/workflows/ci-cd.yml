@@ -35,7 +35,18 @@ jobs:
     needs: build
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Deploy to Render
-        uses: render-examples/deploy-render@v1
-        with:
-          service: my-ml-app44  # Replace with your Render service name
+        env:
+          RENDER_API_TOKEN: ${{ secrets.ML5 }}
+        run: |
+          # Install Render CLI
+          curl -fsSL https://render.com/cli-install | bash
+
+          # Login to Render CLI
+          render login --api-token "${{ secrets.ML5 }}"
+
+          # Deploy the app (replace 'flask-app' with your Render service name)
+          render deploy flask-app
